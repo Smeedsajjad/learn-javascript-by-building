@@ -1,0 +1,2 @@
+# learn-javascript-by-building
+🚀 A collection of 50+ JavaScript mini projects built from scratch, covering core concepts like DOM, events, arrays, objects, API calls, ES6, and more. From beginner-friendly apps to advanced utilities, this repo is my coding playground to practice, learn, and showcase real-world JS skills.
