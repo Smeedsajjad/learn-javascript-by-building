@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Counter</title>
+  <style>
+    :root {
+      --bg-1: 255 255 255;
+      --bg-2: 245 247 255;
+      --fg-1: 20 22 35;
+      --fg-2: 98 105 128;
+      --primary: 97 51 189;
+      /* #6133BD (your preferred color) */
+      --primary-2: 130 92 216;
+      --ring: 178 170 236;
+      --glass: 255 255 255 / 0.55;
+      --shadow: 20 22 35 / 0.18;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: rgb(var(--fg-1));
+      background: linear-gradient(135deg, rgba(var(--primary), 0.13), rgba(var(--primary-2), 0.10)) fixed,
+        radial-gradient(1200px 800px at 10% 10%, rgba(var(--primary), 0.12), transparent 60%) fixed,
+        radial-gradient(1000px 700px at 90% 90%, rgba(var(--primary-2), 0.12), transparent 60%) fixed,
+        rgb(var(--bg-2));
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: min(560px, 94vw);
+      background: linear-gradient(180deg, rgba(var(--bg-1), 0.9), rgba(var(--bg-1), 0.7));
+      backdrop-filter: blur(10px) saturate(1.1);
+      -webkit-backdrop-filter: blur(10px) saturate(1.1);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(var(--shadow));
+      padding: 28px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .title {
+      font-size: clamp(1.25rem, 2.6vw, 1.8rem);
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+
+    .counter {
+      display: grid;
+      grid-template-columns: 64px 1fr 64px;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .btn {
+      appearance: none;
+      border: none;
+      cursor: pointer;
+      height: 64px;
+      width: 64px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(var(--primary), 0.14), rgba(var(--primary-2), 0.10));
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.7),
+        0 6px 14px rgba(var(--primary), 0.18);
+      display: grid;
+      place-items: center;
+      transition: transform 120ms ease, box-shadow 120ms ease, background 140ms ease;
+      position: relative;
+      color: rgb(var(--primary));
+    }
+
+    .btn:hover {
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        0 8px 18px rgba(var(--primary), 0.24);
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+    .btn:focus-visible {
+      outline: 3px solid rgba(var(--ring));
+      outline-offset: 3px;
+    }
+
+    .btn.minus::before,
+    .btn.plus::before,
+    .btn.plus::after {
+      content: "";
+      position: absolute;
+      background: currentColor;
+      border-radius: 2px;
+    }
+
+    .btn.minus::before {
+      width: 26px;
+      height: 3px;
+    }
+
+    .btn.plus::before {
+      /* horizontal */
+      width: 26px;
+      height: 3px;
+    }
+
+    .btn.plus::after {
+      /* vertical */
+      width: 3px;
+      height: 26px;
+    }
+
+    .value {
+      height: 64px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.75));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 1px 0 rgba(0, 0, 0, 0.02);
+      display: grid;
+      place-items: center;
+      font-variant-numeric: tabular-nums;
+      font-size: clamp(1.8rem, 4vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: rgb(var(--fg-1));
+    }
+
+    /* Stepper (Number input with custom chrome) */
+    .stepper {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: 56px 1fr 56px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .chip {
+      height: 56px;
+      width: 56px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(var(--primary), 0.12), rgba(var(--primary-2), 0.10));
+      color: rgb(var(--primary));
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 6px 14px rgba(var(--primary), 0.12);
+    }
+
+    .number {
+      height: 56px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.85);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 1px 0 rgba(0, 0, 0, 0.02);
+      padding: 0 18px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      color: rgb(var(--fg-1));
+      font-variant-numeric: tabular-nums;
+      width: 100%;
+    }
+
+    .number:focus {
+      outline: none;
+    }
+
+    .number:focus-visible {
+      outline: 3px solid rgba(var(--ring));
+      outline-offset: 3px;
+    }
+
+    /* Remove default number arrows to keep it clean */
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+
+    .footer {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: rgb(var(--fg-2));
+      font-size: 0.9rem;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgb(var(--primary));
+      opacity: 0.7;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="card" role="region" aria-label="Counter">
+    <header class="header">
+      <div class="title">Counter</div>
+    </header>
+
+    <section class="counter" aria-label="Counter">
+      <button class="btn minus" type="button" aria-label="Decrease value"></button>
+      <div class="value" id="count" aria-live="polite" aria-atomic="true">0</div>
+      <button class="btn plus" type="button" aria-label="Increase value"></button>
+    </section>
+  </main>
+
+  <script>
+    let counter = 0;
+    let minus = document.querySelector('.minus');
+    let plus = document.querySelector('.plus');
+    let displayCounter = document.getElementById('count');
+
+    plus.addEventListener("click", function () {
+      counter++
+      displayCounter.innerHTML = counter
+
+    })
+
+    minus.addEventListener("click", function () {
+      if (counter > 0) {
+        counter--;
+        displayCounter.innerHTML = counter;
+      }
+
+    })
+  </script>
+
+</body>
+
+</html>
